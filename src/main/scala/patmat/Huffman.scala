@@ -144,20 +144,21 @@ object Huffman {
    * If `trees` is a list of less than two elements, that list should be returned
    * unchanged.
    */
-  def combine(trees: List[CodeTree]): List[CodeTree] =
+  def combine(trees: List[CodeTree]): List[CodeTree] = {
+    def insertByWeight(tree: CodeTree, trees: List[CodeTree]): List[CodeTree] =
+      trees match {
+        case Nil => tree :: Nil
+        case head :: tail =>
+          if (weight(tree) < weight(head)) tree :: head :: tail
+          else head :: insertByWeight(tree, tail)
+      }
+
     trees match {
       case Nil => trees
       case head :: Nil => trees
       case elem1 :: elem2 :: tail => insertByWeight(makeCodeTree(elem1, elem2), tail)
     }
-
-  def insertByWeight(tree: CodeTree, trees: List[CodeTree]): List[CodeTree] =
-    trees match {
-      case Nil => tree :: Nil
-      case head :: tail =>
-        if (weight(tree) < weight(head)) tree :: head :: tail
-        else head :: insertByWeight(tree, tail)
-    }
+  }
 
   /**
    * This function will be called in the following way:
@@ -176,7 +177,9 @@ object Huffman {
    *    the example invocation. Also define the return type of the `until` function.
    *  - try to find sensible parameter names for `xxx`, `yyy` and `zzz`.
    */
-  def until(xxx: ???, yyy: ???)(zzz: ???): ??? = ???
+  def until(f_singleton: List[CodeTree] => Boolean, f_combine: List[CodeTree] => List[CodeTree])(trees: List[CodeTree]): List[CodeTree] =
+    if (f_singleton(trees)) trees
+    else until(f_singleton, f_combine)(f_combine(trees))
 
   /**
    * This function creates a code tree which is optimal to encode the text `chars`.
@@ -184,7 +187,11 @@ object Huffman {
    * The parameter `chars` is an arbitrary text. This function extracts the character
    * frequencies from that text and creates a code tree based on them.
    */
-  def createCodeTree(chars: List[Char]): CodeTree = ???
+  def createCodeTree(chars: List[Char]): CodeTree = {
+    val ordered = makeOrderedLeafList(times(chars))
+    val singletonTree = until(singleton, combine)(ordered)
+    singletonTree.head
+  }
 
 
 
