@@ -98,22 +98,21 @@ object Huffman {
    * head of the list should have the smallest weight), where the weight
    * of a leaf is the frequency of the character.
    */
-  def makeOrderedLeafList(freqs: List[(Char, Int)]): List[Leaf] = {
-    def getSmallest(freqList: List[(Char, Int)], curr: (Char, Int)): (Char, Int) =
-      freqList match {
-        case Nil => curr
-        case head :: tail =>
-          if (head._2 < curr._2) getSmallest(tail, head)
-          else getSmallest(tail, curr)
-      }
-
-    if (freqs.isEmpty) Nil
-    else {
-      val smallest = getSmallest(freqs.tail, freqs.head)
-      new Leaf(smallest._1, smallest._2) :: makeOrderedLeafList(remove(smallest, freqs))
+  def makeOrderedLeafList(freqs: List[(Char, Int)]): List[Leaf] =
+    freqs match {
+      case Nil => Nil
+      case head :: tail =>
+        val smallest = getSmallest(tail, head)
+        new Leaf(smallest._1, smallest._2) :: makeOrderedLeafList(remove(smallest, freqs))
     }
 
-  }
+  def getSmallest(freqList: List[(Char, Int)], curr: (Char, Int)): (Char, Int) =
+    freqList match {
+      case Nil => curr
+      case head :: tail =>
+        if (head._2 < curr._2) getSmallest(tail, head)
+        else getSmallest(tail, curr)
+    }
 
   def remove(target: (Char, Int), list: List[(Char, Int)]): List[(Char, Int)] =
     list match {
@@ -121,12 +120,17 @@ object Huffman {
       case head :: tail =>
         if (head._1 == target._1 && head._2 == target._2) tail
         else head :: remove(target, tail)
-  }
+    }
 
   /**
    * Checks whether the list `trees` contains only one single code tree.
    */
-  def singleton(trees: List[CodeTree]): Boolean = ???
+  def singleton(trees: List[CodeTree]): Boolean =
+    trees match {
+      case Nil => false
+      case head :: Nil => true
+      case head :: tail => false
+  }
 
   /**
    * The parameter `trees` of this function is a list of code trees ordered
@@ -140,7 +144,20 @@ object Huffman {
    * If `trees` is a list of less than two elements, that list should be returned
    * unchanged.
    */
-  def combine(trees: List[CodeTree]): List[CodeTree] = ???
+  def combine(trees: List[CodeTree]): List[CodeTree] =
+    trees match {
+      case Nil => trees
+      case head :: Nil => trees
+      case elem1 :: elem2 :: tail => insertByWeight(makeCodeTree(elem1, elem2), tail)
+    }
+
+  def insertByWeight(tree: CodeTree, trees: List[CodeTree]): List[CodeTree] =
+    trees match {
+      case Nil => tree :: Nil
+      case head :: tail =>
+        if (weight(tree) < weight(head)) tree :: head :: tail
+        else head :: insertByWeight(tree, tail)
+    }
 
   /**
    * This function will be called in the following way:
