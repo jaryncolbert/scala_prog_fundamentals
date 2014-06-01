@@ -203,7 +203,28 @@ object Huffman {
    * This function decodes the bit sequence `bits` using the code tree `tree` and returns
    * the resulting list of characters.
    */
-  def decode(tree: CodeTree, bits: List[Bit]): List[Char] = ???
+  def decode(tree: CodeTree, bits: List[Bit]): List[Char] = {
+    def decodeAcc(partialTree: CodeTree, bits: List[Bit], chars: List[Char]): List[Char] =
+      bits match {
+        case Nil =>
+          partialTree match {
+          case Leaf(char, weight) => char :: chars
+        }
+
+        case head :: tail =>
+
+          partialTree match {
+            case Leaf(char, weight) =>
+              decodeAcc(tree, bits, char :: chars)
+            case Fork(left, right, forkChars, weight) =>
+              if (head == 0) decodeAcc(left, tail, chars)
+              else if (head == 1) decodeAcc(right, tail, chars)
+              else throw new IllegalArgumentException("Non-Binary value in decodeAcc")
+          }
+      }
+
+    decodeAcc(tree, bits, Nil)
+  }
 
   /**
    * A Huffman coding tree for the French language.
@@ -214,14 +235,14 @@ object Huffman {
 
   /**
    * What does the secret message say? Can you decode it?
-   * For the decoding use the `frenchCode' Huffman tree defined above.
+   * For the decoding use the 'frenchCode' Huffman tree defined above.
    */
   val secret: List[Bit] = List(0,0,1,1,1,0,1,0,1,1,1,0,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,1,1,1,1,0,1,0,1,1,0,0,0,0,1,0,1,1,1,0,0,1,0,0,1,0,0,0,1,0,0,0,1,0,1)
 
   /**
    * Write a function that returns the decoded secret
    */
-  def decodedSecret: List[Char] = ???
+  def decodedSecret: List[Char] = decode(frenchCode, secret)
 
 
 
@@ -231,7 +252,31 @@ object Huffman {
    * This function encodes `text` using the code tree `tree`
    * into a sequence of bits.
    */
-  def encode(tree: CodeTree)(text: List[Char]): List[Bit] = ???
+  def encode(tree: CodeTree)(text: List[Char]): List[Bit] = {
+    def contains(tree: CodeTree, target: Char): Boolean =
+      tree match {
+        case Leaf(char, weight) =>
+          char == target
+        case Fork(left, right, forkChars, weight) =>
+          contains(left, target) || contains(right, target)
+      }
+
+    def encodeAcc(partialTree: CodeTree, text: List[Char], bits: List[Bit]): List[Bit] =
+      text match {
+        case Nil => bits
+        case head :: tail =>
+
+          partialTree match {
+            case Leaf(char, weight) => encodeAcc(tree, tail, bits)
+            case Fork(left, right, forkChars, weight) =>
+              if (contains(left, head)) encodeAcc(left, tail, 0 :: bits)
+              else if (contains(right, head)) encodeAcc(right, tail, 1 :: bits)
+              else throw new IllegalArgumentException("Cannot encode char that doesn't appear in tree")
+        }
+      }
+
+    encodeAcc(tree, text, Nil)
+  }
 
 
   // Part 4b: Encoding using code table
