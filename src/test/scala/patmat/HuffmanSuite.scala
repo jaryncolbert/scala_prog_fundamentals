@@ -77,4 +77,29 @@ class HuffmanSuite extends FunSuite {
       assert(decode(t1, List(0, 1, 1, 1)) === "abbb".toList)
     }
   }
+
+  test("Convert t1 matches expected result") {
+    new TestTrees {
+      val converted = convert(t1)
+      assert(converted.contains(('a', List(0))))
+      assert(converted.contains(('b', List(1))))
+      assert(converted.size === 2)
+    }
+  }
+
+  test("Convert t2 matches expected result") {
+    new TestTrees {
+      val converted = convert(t2)
+      assert(converted.contains(('a', List(0, 0))))
+      assert(converted.contains(('b', List(0, 1))))
+      assert(converted.contains(('d', List(1))))
+      assert(converted.size === 3)
+    }
+  }
+
+  test("Quick encode matches expected result") {
+    new TestTrees {
+      assert(quickEncode(t1)("abbb".toList) === List(0, 1, 1, 1))
+    }
+  }
 }
