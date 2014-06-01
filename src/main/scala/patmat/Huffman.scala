@@ -269,8 +269,8 @@ object Huffman {
           partialTree match {
             case Leaf(char, weight) => encodeAcc(tree, tail, bits)
             case Fork(left, right, forkChars, weight) =>
-              if (contains(left, head)) encodeAcc(left, tail, 0 :: bits)
-              else if (contains(right, head)) encodeAcc(right, tail, 1 :: bits)
+              if (contains(left, head)) encodeAcc(left, text, 0 :: bits)
+              else if (contains(right, head)) encodeAcc(right, text, 1 :: bits)
               else throw new IllegalArgumentException("Cannot encode char that doesn't appear in tree")
         }
       }
