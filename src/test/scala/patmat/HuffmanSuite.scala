@@ -65,4 +65,16 @@ class HuffmanSuite extends FunSuite {
       assert(decode(t1, encode(t1)("ab".toList)) === "ab".toList)
     }
   }
+
+  test("Encode matches expected result") {
+    new TestTrees {
+      assert(encode(t1)("abbb".toList) === List(0, 1, 1, 1))
+    }
+  }
+
+  test("Decode matches expected result") {
+    new TestTrees {
+      assert(decode(t1, List(0, 1, 1, 1)) === "abbb".toList)
+    }
+  }
 }
