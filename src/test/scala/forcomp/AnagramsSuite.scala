@@ -26,7 +26,7 @@ class AnagramsSuite extends FunSuite {
 
 
 
-/*  test("dictionaryByOccurrences.get: eat") {
+  test("dictionaryByOccurrences.get: eat") {
     assert(dictionaryByOccurrences.get(List(('a', 1), ('e', 1), ('t', 1))).map(_.toSet) === Some(Set("ate", "eat", "tea")))
   }
 
@@ -42,12 +42,14 @@ class AnagramsSuite extends FunSuite {
 
 
 
+/*
   test("subtract: lard - r") {
     val lard = List(('a', 1), ('d', 1), ('l', 1), ('r', 1))
     val r = List(('r', 1))
     val lad = List(('a', 1), ('d', 1), ('l', 1))
     assert(subtract(lard, r) === lad)
   }
+*/
 
 
 
@@ -73,7 +75,7 @@ class AnagramsSuite extends FunSuite {
 
 
 
-  test("sentence anagrams: []") {
+/*  test("sentence anagrams: []") {
     val sentence = List()
     assert(sentenceAnagrams(sentence) === List(Nil))
   }

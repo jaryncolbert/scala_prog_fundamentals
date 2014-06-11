@@ -42,7 +42,6 @@ object Anagrams {
     s match {
       case Nil => Nil
       case word :: tail => wordOccurrences(word) ++ sentenceOccurrences(tail)
-
   }
 
   /** The `dictionaryByOccurrences` is a `Map` from different occurrences to a sequence of all
@@ -61,7 +60,7 @@ object Anagrams {
    *
    */
   lazy val dictionaryByOccurrences: Map[Occurrences, List[Word]] =
-    dictionary.groupBy(word => wordOccurrences(word))
+    dictionary.groupBy(word => wordOccurrences(word)) withDefaultValue Nil
 
   /** Returns all the anagrams of a given word. */
   def wordAnagrams(word: Word): List[Word] =
@@ -89,7 +88,22 @@ object Anagrams {
    *  Note that the order of the occurrence list subsets does not matter -- the subsets
    *  in the example above could have been displayed in some other order.
    */
-  def combinations(occurrences: Occurrences): List[Occurrences] = ???
+  def combinations(occurrences: Occurrences): List[Occurrences] =
+    occurrences match {
+      case Nil => List(Nil)
+      case (char, freq) :: tail => {
+        lazy val rem_combos = combinations(tail)
+        (
+          for {
+            i <- 0 until rem_combos.size
+            j <- 1 to freq
+          } yield {
+            ((char, j) :: rem_combos(i))
+          }
+        ) ++ rem_combos
+      }.toList
+    }
+
 
   /** Subtracts occurrence list `y` from occurrence list `x`.
    * 
