@@ -156,6 +156,6 @@ trait GameDef {
      */
     def isLegal: Boolean = terrain(b1) && terrain(b2)
 
-
+    def equals(b: Block) = b.b1.equals(b1) && b.b2.equals(b2)
   }
 }
