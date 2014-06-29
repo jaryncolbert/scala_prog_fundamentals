@@ -37,6 +37,8 @@ trait GameDef {
 
     /** The position obtained by changing the `y` coordinate by `d` */
     def dy(d: Int) = copy(y = y + d)
+
+    def equals(p: Pos) = p.x == x && p.y == y
   }
 
   /**
@@ -147,12 +149,13 @@ trait GameDef {
     /**
      * Returns `true` if the block is standing.
      */
-    def isStanding: Boolean = b1.x == b2.x && b1.y == b2.y
+    def isStanding: Boolean = b1.equals(b2)
 
     /**
      * Returns `true` if the block is entirely inside the terrain.
      */
     def isLegal: Boolean = terrain(b1) && terrain(b2)
+
 
   }
 }
